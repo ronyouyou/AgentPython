@@ -30,7 +30,7 @@ def test():
     try:
      with connection.cursor() as connector:
      # Read a single record
-       sql = "SELECT * from users where iduser=1"
+       sql = "SELECT * from users where iduser="+ (str(select))
        connector.execute(sql)
        data=connector.fetchall()
     finally:
