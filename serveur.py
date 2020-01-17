@@ -3,9 +3,10 @@ from flask import Flask, render_template,request,json
 import pymysql.cursors
 
 # Connect to the database
-connection = pymysql.connect(host='localhost',
+connection = pymysql.connect(host='192.168.3.26',
                              user='root',
-                             password='',
+                             password='rtlry',
+                             port = 3306,
                              db='utilisateurs',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
