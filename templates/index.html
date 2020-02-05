@@ -1,54 +1,38 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
 </head>
-
 <body>
-    <div class="container">
-        <h5>ID machine</h5>
-        <ul class="collapsible expandable">
-            <li>
-                <div class="collapsible-header"><i class="material-icons">computer</i>General Info</div>
-                <div class="collapsible-body"><div> 
-                        <ul>
-                            <li> OS: </li>
-                            <li> Uptime: </li>
-                            <li> Hostname: </li>
-                            <li> Kernel: </li>
-                            <li> CPU(s): </li>
-                        </ul>
-            </li>
-            <li>
-                <div class="collapsible-header"><i class="material-icons">settings</i>CPU Usage</div>
-                <div class="collapsible-body"><div id="donutchart"></div></div>
-            </li>
-            <li>
-                <div class="collapsible-header"><i class="material-icons">data_usage</i>Memory Usage</div>
-                <div class="collapsible-body"><div id="chart_divLine"></div></div>
-            </li>
-            <li>
-                <div class="collapsible-header"><i class="material-icons">inbox</i>Disk Usage // Type partition</div>
-                <div class="collapsible-body"><div id="table_div"></div>
-            </li>
-            <li>
-                <div class="collapsible-header"><i class="material-icons">flash_on</i>Load Average</div>
-                <div class="collapsible-body"><div id="chart_divLine2"></div></div>
-            </li>
-        </ul>
+<nav>
+<div class="nav-wrapper">
+    <a href="#!" class="brand-logo center">Dashboard</a>
+    <ul class="left hide-on-med-and-down">
+    <li class="active"><a href="/">Accueil</a></li>
+    </ul>
+</div>
+</nav>      
+<div class="container">  
+    <div class="input-field col s12">
+        <select id="selectedMachine">
+            <option value="" disabled selected>Selectionnez une machine</option>
+            {% for machine in listeMachines %}
+            <option value="{{machine.idHote}}" oncl>{{machine.nom}} ({{machine.idHote}})</option>
+            {% endfor %}
+        </select>
+        <label>Selection de la machine</label>
     </div>
-    <script>
+    <button class="btn waves-effect waves-light" onclick="goToMachine()">
+        Accéder
+        <i class="material-icons right">send</i>
+    </button> 
+</div>
 
-    </script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.4/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.4/js/materialize.min.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src="../static/js/index.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.4/css/materialize.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.4/js/materialize.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
-
 </html>
