@@ -24,9 +24,9 @@ def getAll():
 @app.route("/machine/<int:idMachine>/getInfos")
 def getInfos(idMachine):
   metrics = {}
-  sql2 = "SELECT * FROM disque where disque.idHote="+(str(idMachine))
+  sql2 = "SELECT * FROM disque where disque.idHote="+(str(idMachine)+" ORDER BY idDisque DESC LIMIT 10")
   metrics['memoryUsage']=select(sql2)     
-  sql3 = "SELECT * FROM typepartition inner join disque on disque.idDisque=typepartition.idDisque where disque.idHote="+(str(idMachine))
+  sql3 = "SELECT * FROM typepartition inner join disque on disque.idDisque=typepartition.idDisque where disque.idHote="+(str(idMachine)+" ORDER BY typepartition.idDisque DESC LIMIT 10")
   metrics['diskUsage']=select(sql3)    
   sql4 = "SELECT * FROM cpu where cpu.idHote="+(str(idMachine))
   metrics['cpuUsage']=select(sql4)    

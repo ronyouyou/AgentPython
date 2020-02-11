@@ -1,64 +1,105 @@
+var pageURL = window.location.href;
+var idHote = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+var dataMachine;
 var elem = document.querySelector('.collapsible.expandable');
   var instance = M.Collapsible.init(elem, {
       accordion: false
 });
-fetch('/machine/3/getInfos')
+var autoReload = setInterval(refreshDatas,5000);
+function refreshDatas(){
+	fetch('/machine/'+idHote+'/getInfos')
+	.then(response => response.json())
+	.then(data => {
+	  this.dataMachine = data;
+	})
+	.catch(error => console.error(error));
+	drawChartLine1();
+	drawChart();
+	drawTable();
+}
+
+fetch('/machine/'+idHote+'/getInfos')
 .then(response => response.json())
 .then(data => {
-  console.log(data) 
+  this.dataMachine = data;
 })
 .catch(error => console.error(error))
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawChartLine1);
 function drawChartLine1() {
-  var data = google.visualization.arrayToDataTable([
-    ['Total', 'Free', 'Used', 'Buffers', 'Cached'],
-    [parseInt(memory[2]),parseInt(memory[3]),parseInt(memory[4]),parseInt(memory[0]),parseInt(memory[1])],
-  ]);
+  var dataTable = new google.visualization.DataTable();
+  dataTable.addColumn('number', 'Total');
+  dataTable.addColumn('number', 'Free');
+  dataTable.addColumn('number', 'Used');
+  dataTable.addColumn('number', 'Buffers');
+  dataTable.addColumn('number', 'Cached');
 
-  var options = {
-    isStacked : true, 
-    title: 'Memory Usage',
-    hAxis: {title: 'Memory',  titleTextStyle: {color: '#333'}},
-    vAxis: {minValue: 0}
+  for(var i = 0; i < dataMachine.memoryUsage.length; i++){
+    dataTable.addRow([dataMachine.memoryUsage[i].memoireTotal,
+      dataMachine.memoryUsage[i].memoireLibre,
+      dataMachine.memoryUsage[i].memoireOccupe,
+      dataMachine.memoryUsage[i].buffer,
+      dataMachine.memoryUsage[i].cache]);
+  }
+
+  var options_stacked = {
+    isStacked: 'relative',
+    height: 300,
+    legend: {maxLines: 3},
+    vAxis: {
+      minValue: 0,
+      ticks: [0,.15, .3, .45, .6, .75,.9, 1]
+    }
   };
-  var chart = new google.visualization.AreaChart(document.getElementById('chart_divLine'));
-  chart.draw(data,options);
+
+  var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+  chart.draw(dataTable, options_stacked);
 }
 google.charts.setOnLoadCallback(drawChart);
 function drawChart() {
-  var free= parseInt(cpu[2]-cpu[1]);
-  var used = parseInt(cpu[1]);
-  var data = google.visualization.arrayToDataTable([
-    ['CPU', 'PERCENT'],
-    ['Free',free*100],
-    ['Used',used*100],
-  ]);
-
+  var cpuUsed = 0;
+  var freeCPU = 0;
+  var dataTable = new google.visualization.DataTable();
+  dataTable.addColumn('string', 'CPU');
+  dataTable.addColumn('number', 'Used');
+  for(var index = 0; index < dataMachine.cpuUsage.length; index++) { 
+    console.log(freeCPU,cpuUsed);
+    freeCPU = freeCPU + dataMachine.cpuUsage[index].frequenceMax;
+    cpuUsed = cpuUsed + dataMachine.cpuUsage[index].frequence;
+  }
+  freeCPU = freeCPU / dataMachine.cpuUsage.length;
+  cpuUsed = cpuUsed / dataMachine.cpuUsage.length;
+  dataTable.addRow(["Free",freeCPU]);
+  dataTable.addRow(["Used",cpuUsed])
   var options = {
     title: 'CPU USAGE',
     pieHole: 0.4,
   };
 
   var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-  chart.draw(data, options);
+  chart.draw(dataTable, options);
 }
 
 google.charts.load('current', {'packages':['table']});
       google.charts.setOnLoadCallback(drawTable);
 
 function drawTable() {
-  var data = new google.visualization.DataTable();
-  data.addColumn('number', 'Available');
-  data.addColumn('string', 'File system');
-  data.addColumn('string', 'Mounted');
-  data.addColumn('string', 'Pourcentage');
-  data.addColumn('string', 'Size');
-  data.addColumn('string', 'Used');
-  data.addRow([parseInt(disk[2]),parseInt(disk[0]),parseInt(disk[5]),parseInt(disk[1]),parseInt(disk[4]),parseInt(disk[3])])
-
+  var dataTable = new google.visualization.DataTable();
+  dataTable.addColumn('number', 'Available');
+  dataTable.addColumn('string', 'File system');
+  dataTable.addColumn('string', 'Mounted');
+  dataTable.addColumn('string', 'Pourcentage');
+  dataTable.addColumn('number', 'Size');
+  dataTable.addColumn('number', 'Used');
+  for(var i = 0; i < dataMachine.diskUsage.length; i++){
+    dataTable.addRow([dataMachine.diskUsage[i].available,
+      dataMachine.diskUsage[i].fileSystem,
+      dataMachine.diskUsage[i].mounted,
+      dataMachine.diskUsage[i].pourcentage,
+      dataMachine.diskUsage[i].size,
+      dataMachine.diskUsage[i].used]);
+  }
   var table = new google.visualization.Table(document.getElementById('table_div'));
-
-  table.draw(data, {width: '100%', height: '100%'});
+  table.draw(dataTable, {width: '100%', height: '100%'});
 }
 
