@@ -1,41 +1,73 @@
 from flask import Flask, render_template,request,jsonify
 import pymysql.cursors
+def initConnection():
 # Connect to the database
-connection = pymysql.connect(host='192.168.3.26',
-                             port=3306,
-                             user='tests4',
-                             password='4NqGjgkZ',
-                             db='tests4',
-                             charset='utf8mb4',
-                             cursorclass=pymysql.cursors.DictCursor)
+  connection = pymysql.connect(host='localhost',
+                              port=3308,
+                              user='root',
+                              password='',
+                              db='tests4',
+                              charset='utf8mb4',
+                              cursorclass=pymysql.cursors.DictCursor)
+  return connection
 app = Flask(__name__)
-def select(sql):
-  cursor = connection.cursor()
-  cursor.execute(sql)
-  temp = cursor.fetchall()
-  return temp 
-
-@app.route('/',methods=['POST', 'GET'])
-def getAll():
+@app.route('/',methods=['GET'])
+def getAllMachines():
   # Read a single record
+  connection = initConnection()
+  cursor = connection.cursor()
   sql = "SELECT hote.idHote,hote.nom from hote"
-  data = select(sql)
+  cursor.execute(sql)
+  data = cursor.fetchall()
+  cursor.close()
+  connection.close()
   return render_template("index.html", taille = len(data), listeMachines=data)
-@app.route("/machine/<int:idMachine>/getInfos")
-def getInfos(idMachine):
+@app.route("/machine/<int:idMachine>/getCPUInfo",methods=['GET'])
+def getCPUInfo(idMachine):
+  connection = initConnection()
+  cursor = connection.cursor()
   metrics = {}
-  sql2 = "SELECT * FROM disque where disque.idHote="+(str(idMachine)+" ORDER BY idDisque DESC LIMIT 10")
-  metrics['memoryUsage']=select(sql2)     
-  sql3 = "SELECT * FROM typepartition inner join disque on disque.idDisque=typepartition.idDisque where disque.idHote="+(str(idMachine)+" ORDER BY typepartition.idDisque DESC LIMIT 10")
-  metrics['diskUsage']=select(sql3)    
-  sql4 = "SELECT * FROM cpu where cpu.idHote="+(str(idMachine))
-  metrics['cpuUsage']=select(sql4)    
+  sql = "SELECT * FROM cpu where cpu.idHote="+(str(idMachine))
+  cursor.execute(sql)
+  metrics['cpuUsage']=cursor.fetchall()
+  cursor.close()
+  connection.close()        
   return jsonify(metrics)
-  
-@app.route("/machine/<int:idMachine>" , methods=['GET', 'POST'])
-def getMachine(idMachine):
+
+@app.route("/machine/<int:idMachine>/getMemoryInfo",methods=['GET'])
+def getMemoryInfo(idMachine):
+  connection = initConnection()
+  cursor = connection.cursor()
+  metrics = {}
+  sql = "SELECT * FROM disque where disque.idHote="+(str(idMachine)+" ORDER BY idDisque DESC LIMIT 10")
+  cursor.execute(sql)  
+  metrics['memoryUsage']=cursor.fetchall()
+  cursor.close()
+  connection.close()
+  return jsonify(metrics)  
+
+@app.route("/machine/<int:idMachine>/getDiskInfo",methods=['GET'])
+def getDiskInfo(idMachine):
+  connection = initConnection()
+  cursor = connection.cursor()
+  metrics = {}  
+  sql = "SELECT * FROM typepartition inner join disque on disque.idDisque=typepartition.idDisque where disque.idHote="+(str(idMachine)+" ORDER BY typepartition.idDisque DESC LIMIT 10")
+  cursor.execute(sql)
+  metrics['diskUsage']=cursor.fetchall()
+  cursor.close()
+  connection.close()
+  return jsonify(metrics)
+
+@app.route("/machine/<int:idMachine>/hostInfo",methods=['GET'])
+def getHostInfo(idMachine):
+  connection = initConnection()
+  cursor = connection.cursor()  
   sql = "SELECT * FROM hote where hote.idHote="+(str(idMachine))
-  hostInfo=select(sql)
-  return render_template("select.html", host=hostInfo)# just to see what select is
+  cursor.execute(sql)
+  metrics=cursor.fetchone()
+  cursor.close()
+  connection.close()
+  return jsonify(metrics)
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
