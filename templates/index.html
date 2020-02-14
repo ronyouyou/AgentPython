@@ -9,7 +9,7 @@
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Application Python</a>
         <select onchange="refreshDatas();" id="selectedMachine" class="form-control form-control-lg">
-          <option value="" disabled selected>Selectionnez une machine</option>
+          <option value="" disabled selected>Sélectionnez une machine</option>
           {% for machine in listeMachines %}
           <option value="{{machine.idHote}}" oncl>{{machine.nom}} ({{machine.idHote}})</option>
           {% endfor %}
