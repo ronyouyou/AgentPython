@@ -18,7 +18,10 @@ AgentPython est une application permettant d'avoir un monitoring d'une machine e
 ##### Executer le script tests4.sql
 
 ```
-Se connecter sur la base de données => Cliquer sur Importer => Parcourir les fichiers => Executer 'tests4.sql'
+Se connecter sur la base de données 
+=> Cliquer sur Importer 
+=> Parcourir les fichiers 
+=> Executer 'tests4.sql'
 ```
 
 
@@ -51,10 +54,9 @@ python3 serveur.py
 
 ### Utilisation
 
-Pour utiliser l'application, ouvrez votre navigateur et saisissez dans votre barre d'adresse la ligne suivante 
-('localhost' peut être remplacé par une adresse IP)
+Pour utiliser l'application, ouvrez votre navigateur et saisissez dans votre barre d'adresse la ligne suivante
 
 ```
 http://localhost:5000/
 ```
-
+('localhost' peut être remplacé par une adresse IP)
