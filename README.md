@@ -46,9 +46,10 @@ connection = pymysql.connect(host='localhost',
 
 #### Etape 2 : Démarrage du serveur de l'application
 
-Ouvrez un invite de commande dans le dossier de l'application et exécutez la ligne suivante
+Ouvrez un invite de commande dans le dossier de l'application et exécutez les ligne suivante
 
 ```
+pip3 install -r requirements.txt
 python3 serveur.py
 ```
 
