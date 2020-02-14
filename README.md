@@ -39,7 +39,7 @@ connection = pymysql.connect(host='localhost',
                             cursorclass=pymysql.cursors.DictCursor)
 ```
 
-- "database" correspond au nom de votre base de données
+- "db" correspond au nom de votre base de données
 - "user" correspond à l'utilisateur de la base
 - "password" correspond au mot de passe de l'utilisateur
 - "port" correspond au port de votre serveur MySQL
